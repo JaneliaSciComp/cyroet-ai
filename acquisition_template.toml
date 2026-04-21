@@ -1,0 +1,63 @@
+# acquisition.toml — researcher-authored per-acquisition metadata.
+# One file per acquisition, placed at the root of each acquisition directory.
+# The acquisition directory name IS the acquisition's identity — not repeated here.
+#
+# Likewise, every [[tomogram]] and [[annotation]] entry in this file implicitly
+# belongs to the enclosing acquisition directory. No `acquisition_id` field is
+# needed — the validator injects it from the path at load time.
+#
+# HOW TO USE THIS TEMPLATE
+# ────────────────────────
+# 1. Fill in every field marked  ← FILL IN in the [acquisition] section.
+# 2. Append a [[tomogram]] block for each tomogram processing pipeline output.
+# 3. Append an [[annotation]] block for each annotation run (segmentation,
+#    particle locations, active zone, etc.).
+# 4. Entries are immutable once added — reprocessing produces a NEW entry
+#    with a new `id`. Never modify or delete existing entries.
+#
+# The portal reads pixel size, tilt angles, dose, date, voltage, camera,
+# and energy filter slit width directly from MDOC files — omit those here.
+#
+# EXTRA FIELDS
+# ────────────
+# You may add any key-value pair that is not yet in conditions.json. The
+# validator reports it as a warning but the file still passes.
+#
+# VALIDATION
+# ──────────
+# Run from the sample root before committing:
+#   python validate_sample.py {sample_dir}
+
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 1 — Acquisition parameters
+# Researcher-authored imaging parameters that are not in MDOC files.
+# ════════════════════════════════════════════════════════════════
+
+[acquisition]
+resolution    = ""    # ← FILL IN  nominal resolution in Å, e.g. 3.5
+tilt_spacing  = ""    # ← FILL IN  nominal tilt step in degrees, e.g. 3.0
+defocus_range = ""    # ← FILL IN  target defocus range in µm, e.g. "-1.5 to -3.0"
+energy_filter = ""    # ← FILL IN  model name, e.g. "Selectris", "GIF Quantum", "none"
+phase_plate   = ""    # ← FILL IN  true | false
+microscope    = ""    # ← FILL IN  model name, e.g. "Titan Krios", "Glacios"
+
+
+# ════════════════════════════════════════════════════════════════
+# SECTION 2 — Processing log
+# Append entries below as tomograms and annotations are produced.
+# These start empty — add them as processing happens.
+# ════════════════════════════════════════════════════════════════
+
+# [[tomogram]]
+# id                     = ""   # processing pipeline label and folder name, e.g. "bp_3dctf_bin4"
+# pipeline               = ""   # e.g. "backprojection + 3D CTF correction"
+# software               = ""   # e.g. "IMOD 4.12 + novaCTF"
+# voxel_bin              =      # integer, e.g. 4
+# voxel_spacing_angstrom =      # float, e.g. 10.0
+# derived_from           = []   # list of tomogram ids in this acquisition; empty for raw reconstructions
+
+# [[annotation]]
+# id              = ""   # unique annotation label and folder name, e.g. "membrain_seg_v10"
+# type            = ""   # e.g. membrane_segmentation | nucleosome_placement | active_zone
+# target_tomogram = ""   # id of the tomogram in this acquisition that this was generated from

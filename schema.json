@@ -1,0 +1,1082 @@
+{
+  "$defs": {
+    "Acquisition": {
+      "additionalProperties": true,
+      "properties": {
+        "acquisition_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acquisition Id"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution"
+        },
+        "tilt_spacing": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tilt Spacing"
+        },
+        "defocus_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Defocus Range"
+        },
+        "energy_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Energy Filter"
+        },
+        "phase_plate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phase Plate"
+        },
+        "microscope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Microscope"
+        },
+        "pixel_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pixel Size"
+        },
+        "dose_per_tilt": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dose Per Tilt"
+        },
+        "total_dose": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Dose"
+        },
+        "tilt_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tilt Min"
+        },
+        "tilt_max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tilt Max"
+        },
+        "tilt_axis": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tilt Axis"
+        },
+        "defocus_per_image": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Defocus Per Image"
+        },
+        "date_collected": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Collected"
+        },
+        "voltage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voltage"
+        },
+        "energy_filter_slit_width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Energy Filter Slit Width"
+        },
+        "frame_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame Count"
+        },
+        "camera": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera"
+        }
+      },
+      "title": "Acquisition",
+      "type": "object"
+    },
+    "AcquisitionFile": {
+      "additionalProperties": true,
+      "description": "Parsed contents of one acquisition.toml.",
+      "properties": {
+        "acquisition": {
+          "$ref": "#/$defs/Acquisition"
+        },
+        "tomogram": {
+          "items": {
+            "$ref": "#/$defs/Tomogram"
+          },
+          "title": "Tomogram",
+          "type": "array"
+        },
+        "annotation": {
+          "items": {
+            "$ref": "#/$defs/Annotation"
+          },
+          "title": "Annotation",
+          "type": "array"
+        }
+      },
+      "required": [
+        "acquisition"
+      ],
+      "title": "AcquisitionFile",
+      "type": "object"
+    },
+    "Annotation": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "target_tomogram": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Tomogram"
+        },
+        "files": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Files",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Annotation",
+      "type": "object"
+    },
+    "Aunp": {
+      "additionalProperties": true,
+      "properties": {
+        "size_nm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Nm"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "fluorophore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fluorophore"
+        },
+        "concentration_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concentration Value"
+        },
+        "concentration_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concentration Unit"
+        },
+        "conjugation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conjugation"
+        },
+        "conjugation_target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conjugation Target"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "title": "Aunp",
+      "type": "object"
+    },
+    "Chromatin": {
+      "additionalProperties": true,
+      "properties": {
+        "substrate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Substrate"
+        },
+        "linker_length_bp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linker Length Bp"
+        },
+        "linker_pattern": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linker Pattern"
+        },
+        "linker_distribution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linker Distribution"
+        },
+        "buffer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buffer"
+        },
+        "ptm": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ptm"
+        },
+        "histone_variants": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Histone Variants"
+        },
+        "transcription_factors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcription Factors"
+        },
+        "nucleosome_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nucleosome Count"
+        },
+        "dna_length_bp": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dna Length Bp"
+        },
+        "nucleosome_uM": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nucleosome Um"
+        },
+        "sequence_identity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence Identity"
+        },
+        "nucleosome_footprint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nucleosome Footprint"
+        },
+        "linker_length_fraction": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linker Length Fraction"
+        }
+      },
+      "title": "Chromatin",
+      "type": "object"
+    },
+    "DataSource": {
+      "enum": [
+        "cryoet",
+        "simulation"
+      ],
+      "title": "DataSource",
+      "type": "string"
+    },
+    "Freezing": {
+      "additionalProperties": true,
+      "properties": {
+        "grid_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grid Type"
+        },
+        "cryoprotectant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cryoprotectant"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "planchette_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planchette Size"
+        },
+        "spacer_thickness": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spacer Thickness"
+        }
+      },
+      "title": "Freezing",
+      "type": "object"
+    },
+    "Milling": {
+      "additionalProperties": true,
+      "properties": {
+        "scheme": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheme"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "title": "Milling",
+      "type": "object"
+    },
+    "Project": {
+      "enum": [
+        "chromatin",
+        "synapse"
+      ],
+      "title": "Project",
+      "type": "string"
+    },
+    "Sample": {
+      "additionalProperties": true,
+      "properties": {
+        "sample_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sample Id"
+        },
+        "data_source": {
+          "$ref": "#/$defs/DataSource"
+        },
+        "project": {
+          "$ref": "#/$defs/Project"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "cell_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Type"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "data_source",
+        "project"
+      ],
+      "title": "Sample",
+      "type": "object"
+    },
+    "Simulation": {
+      "additionalProperties": true,
+      "properties": {
+        "dataset_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset Type"
+        }
+      },
+      "title": "Simulation",
+      "type": "object"
+    },
+    "Synapse": {
+      "additionalProperties": true,
+      "properties": {
+        "label_target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Target"
+        },
+        "label_strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Strategy"
+        }
+      },
+      "title": "Synapse",
+      "type": "object"
+    },
+    "Tomogram": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pipeline"
+        },
+        "software": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Software"
+        },
+        "voxel_bin": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voxel Bin"
+        },
+        "voxel_spacing_angstrom": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voxel Spacing Angstrom"
+        },
+        "derived_from": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Derived From",
+          "type": "array"
+        },
+        "is_raw": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Raw"
+        },
+        "image_size_x": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Size X"
+        },
+        "image_size_y": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Size Y"
+        },
+        "image_size_z": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Size Z"
+        },
+        "mrc_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mrc Path"
+        },
+        "zarr_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zarr Path"
+        },
+        "zarr_axes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zarr Axes"
+        },
+        "zarr_scale": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zarr Scale"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Tomogram",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "description": "Merged sample.toml + every acquisition.toml under the sample directory.\n\n`acquisitions` is keyed by acquisition directory name (path-injected by the\nvalidator, not authored in the TOML).",
+  "properties": {
+    "sample": {
+      "$ref": "#/$defs/Sample"
+    },
+    "simulation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Simulation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "chromatin": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Chromatin"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "synapse": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Synapse"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "aunp": {
+      "items": {
+        "$ref": "#/$defs/Aunp"
+      },
+      "title": "Aunp",
+      "type": "array"
+    },
+    "freezing": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Freezing"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "milling": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Milling"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "acquisitions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/AcquisitionFile"
+      },
+      "title": "Acquisitions",
+      "type": "object"
+    }
+  },
+  "required": [
+    "sample"
+  ],
+  "title": "SampleRecord",
+  "type": "object"
+}

@@ -1,0 +1,110 @@
+# sample.toml — researcher-authored sample-level metadata.
+# One file per sample, placed at the root of the sample directory.
+# The sample directory name IS the sample's identity — not repeated here.
+#
+# Per-acquisition parameters (resolution, microscope, defocus range, …) and
+# the processing log live in {acquisition}/acquisition.toml — see
+# acquisition_template.toml.
+#
+# HOW TO USE
+# ──────────
+# 1. Fill in every field marked  ← FILL IN
+# 2. Delete the [synapse] block if your project is "chromatin", or vice versa.
+# 3. Uncomment optional blocks ([[aunp]], [freezing], [milling]) only if applicable.
+#
+# EXTRA FIELDS
+# ────────────
+# You may add any key-value pair that is not yet in conditions.json. Add it
+# directly to the relevant section — the validator reports it as a warning
+# but the file still passes. Example:
+#
+#   [chromatin]
+#   substrate         = "synthetic"
+#   ionic_strength_mM = 154.0   # ← extra field, not yet in conditions.json
+#
+# If the field proves useful, notify the SciComp team so it can be
+# formally added to conditions.json.
+#
+# VALIDATION
+# ──────────
+# Run before committing (validates sample.toml + every acquisition.toml
+# under the sample directory):
+#   python validate_sample.py {sample_dir}
+
+
+# ════════════════════════════════════════════════════════════════
+# Sample conditions
+# These power the coverage matrix across cryoET and simulation data.
+# ════════════════════════════════════════════════════════════════
+
+[sample]
+data_source = ""    # ← FILL IN  cryoet | simulation
+project     = ""    # ← FILL IN  synapse | chromatin
+type        = ""    # ← FILL IN  e.g. tissue | cellular | reconstituted
+# cell_type   = ""  # ← FILL IN  required if type = "cellular"
+# description = ""  # optional free-text description
+
+
+# ── Synapse-specific  (delete this block if project = "chromatin") ────────────
+
+[synapse]
+label_target   = ""   # ← FILL IN  e.g. none | glutamate_receptor | AMPA | NMDA | kainate
+label_strategy = ""   # ← FILL IN  e.g. none | single_label | dual_label | dimer_label
+
+
+# ── Chromatin-specific  (delete this block if project = "synapse") ───────────
+# Uncomment and complete the fields that apply to your substrate.
+
+# [chromatin]
+# substrate             = ""   # ← FILL IN  e.g. synthetic | native | n/a
+# linker_length_bp      =      # ← FILL IN  homogenous linker length in bp (float)
+# linker_pattern        = []   # ← FILL IN  patterned linker lengths, e.g. [20, 50, 20, 50]
+# linker_distribution   = ""   # ← FILL IN  free-text for non-homogenous, non-patterned linkers
+# buffer                = ""   # ← FILL IN  e.g. "2.0 mM MgCl2, 150 mM KCl"
+# ptm                   = ""   # ← FILL IN  e.g. none | H3K9me3 | H3K27me3 | H3K27Ac | H4K16Ac
+# histone_variants      = ""   # ← FILL IN  e.g. canonical | macroH2A | H2A.Z
+# transcription_factors = ""   # ← FILL IN  e.g. none | HP1a | Brd4
+# nucleosome_count      =      # ← FILL IN  integer
+# dna_length_bp         =      # ← FILL IN  integer
+# nucleosome_uM         =      # ← FILL IN  float
+# # For native substrates:
+# sequence_identity     = ""   # ← FILL IN
+# nucleosome_footprint  = []   # ← FILL IN
+
+
+# ── Simulation-specific  (uncomment only if data_source = "simulation") ──────
+
+# [simulation]
+# dataset_type = ""   # ← FILL IN  e.g. single_molecule | slab | bulk
+
+
+# ── Gold nanoparticle labeling ──────────
+# Copy the [[aunp]] block for each distinct AuNP label.
+
+[[aunp]]
+size_nm             =      # ← FILL IN  AuNP diameter in nm (float)
+type                = ""   # ← FILL IN  e.g. colloidal, cluster
+fluorophore         = ""   # ← FILL IN  e.g. Alexa647, Alexa488, or "none"
+concentration_value =      # ← FILL IN  numeric concentration (float)
+concentration_unit  = ""   # ← FILL IN  unit string, e.g. "nM", "ug/mL"
+conjugation         = ""   # ← FILL IN  e.g. Fab | nanobody | chemical_tag | none
+conjugation_target  = ""   # ← FILL IN  e.g. GluA2, H3K9me3
+# notes               = ""   # optional free-text notes
+
+
+# ── Freezing / grid preparation ─────────
+
+[freezing]
+grid_type        = ""   # ← FILL IN  e.g. "Quantifoil R2/2"
+cryoprotectant   = ""   # ← FILL IN  or "none"
+method           = ""   # ← FILL IN  plunge_frozen | HPF
+# # HPF-only:
+# planchette_size  = ""   # ← FILL IN  e.g. "3 mm"
+# spacer_thickness = ""   # ← FILL IN  e.g. "100 um"
+
+
+# ── Milling ────
+
+[milling]
+scheme = ""   # ← FILL IN  e.g. cryo-FIB
+date   = ""   # ← FILL IN  YYYY-MM-DD
