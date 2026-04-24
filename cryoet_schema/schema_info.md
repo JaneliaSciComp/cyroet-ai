@@ -4,7 +4,7 @@ This document enumerates every field that will be stored in the portal database,
 
 | Source | What it means |
 |---|---|
-| `sample.toml` | Researcher-authored sample-level metadata — one file at the sample root. Field definitions live in `conditions.json`. Section shown in parentheses. |
+| `sample.toml` | Researcher-authored sample-level metadata — one file at the sample root. Field definitions live in `schema.py`. Section shown in parentheses. |
 | `acquisition.toml` | Researcher-authored per-acquisition parameters and processing log (`[[tomogram]]`, `[[annotation]]` entries) — one file in each acquisition directory. Section shown in parentheses. |
 | `MDOC` | Parsed from `.mdoc` files in the `Frames/` directory by `ingest_mdoc.py`. |
 | `.eer` / `.tiff` | Derived from frame file extension or EER header metadata. |
@@ -13,7 +13,7 @@ This document enumerates every field that will be stored in the portal database,
 | `directory` | Implicit from the prescribed directory structure (sample dir name, acquisition dir name, processing folder name). |
 | `derived` | Computed on ingest from other DB fields (e.g., tilt range formatted string). |
 
-Researcher-authored fields live in one of two files: sample-level metadata in `sample.toml` at the sample root, and per-acquisition parameters plus the processing log in `acquisition.toml` inside each acquisition directory. Both files are governed by `conditions.json`; the section in parentheses identifies the TOML table (`[sample]`, `[chromatin]`, `[acquisition]`, `[[tomogram]]`, etc.). Fields coming from any other source are **not** entered by researchers and are not duplicated in either TOML (no-duplication principle).
+Researcher-authored fields live in one of two files: sample-level metadata in `sample.toml` at the sample root, and per-acquisition parameters plus the processing log in `acquisition.toml` inside each acquisition directory. Both files are governed by `schema.py`; the section in parentheses identifies the TOML table (`[sample]`, `[chromatin]`, `[acquisition]`, `[[tomogram]]`, etc.). Fields coming from any other source are **not** entered by researchers and are not duplicated in either TOML (no-duplication principle).
 
 **Key annotations**: `(PK)` marks a **primary key** — the column that uniquely identifies each row in that table. `(FK)` marks a **foreign key** — a column whose value references the primary key of another table, used to link rows across entities (e.g., a tomogram's `acquisition_id` points back to its parent acquisition row).
 

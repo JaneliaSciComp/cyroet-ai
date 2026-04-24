@@ -8,13 +8,13 @@ The central design goal is answering one question across both the experimental a
 
 | File | Purpose |
 |---|---|
-| `schema_info.md` | Human-readable reference for every field that will land in the portal database, grouped by entity (Sample → Acquisition → Tomogram → Annotation) with the authoritative source of each (TOML vs MDOC vs MRC vs directory vs derived). |
-| `schema.py` | Authoritative Pydantic schema — defines every metadata field, its type, and any constraints. |
-| `schema.json` | Language-neutral JSON Schema generated from `schema.py` for non-Python consumers (portal UI, etc.). |
-| `sample_template.toml` | Starter template for `sample.toml` — copy into each sample directory and fill in. |
-| `acquisition_template.toml` | Starter template for `acquisition.toml` — copy into each acquisition directory and fill in. |
-| `validate_sample.py` | Validator: `pixi run validate {sample_dir}`. |
-| `generate_json_schema.py` | Regenerates `schema.json` from the Pydantic models: `pixi run json-schema`. |
+| `cryoet_schema/schema_info.md` | Human-readable reference for every field that will land in the portal database, grouped by entity (Sample → Acquisition → Tomogram → Annotation) with the authoritative source of each (TOML vs MDOC vs MRC vs directory vs derived). |
+| `cryoet_schema/schema.py` | Authoritative Pydantic schema — defines every metadata field, its type, and any constraints. |
+| `cryoet_schema/schema.json` | Language-neutral JSON Schema generated from `schema.py` for non-Python consumers (portal UI, etc.). |
+| `templates/sample.toml` | Starter template for `sample.toml` — copy into each sample directory and fill in. |
+| `templates/acquisition.toml` | Starter template for `acquisition.toml` — copy into each acquisition directory and fill in. |
+| `scripts/validate.py` | Validator: `pixi run validate {sample_dir}`. |
+| `scripts/generate_json_schema.py` | Regenerates `schema.json` from the Pydantic models: `pixi run json-schema`. |
 | `pixi.toml` / `pixi.lock` | Pinned Python + Pydantic + tomli environment. |
 
 ---
@@ -170,7 +170,7 @@ gouauxlab_20250418_AMmilled29-2/
 
 ### 2. Fill out `sample.toml`
 
-Copy `sample_template.toml` to the sample root as `sample.toml` and fill it in:
+Copy `templates/sample.toml` to the sample root as `sample.toml` and fill it in:
 
 - Every field marked `← FILL IN` must be completed.
 - Delete the `[synapse]` block if your project is `chromatin`, or vice versa.
@@ -180,7 +180,7 @@ Sample-level conditions only — do not put imaging parameters here.
 
 ### 3. Fill out `acquisition.toml` in each acquisition directory
 
-Copy `acquisition_template.toml` into each acquisition directory as `acquisition.toml` and fill in the researcher-authored imaging parameters (nominal resolution, microscope, defocus range, …). The template pre-populates fields that are constant across a lab's acquisitions, so you should only need to change what differs between acquisitions.
+Copy `templates/acquisition.toml` into each acquisition directory as `acquisition.toml` and fill in the researcher-authored imaging parameters (nominal resolution, microscope, defocus range, …). The template pre-populates fields that are constant across a lab's acquisitions, so you should only need to change what differs between acquisitions.
 
 Leave the processing-log section (the `[[tomogram]]` and `[[annotation]]` blocks) empty at this stage — you'll append to it as processing happens.
 

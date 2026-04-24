@@ -1,7 +1,7 @@
 """Validate a cryoET sample directory against the Pydantic schema.
 
 Usage:
-    pixi run python validate_sample.py <sample_dir>
+    pixi run validate <sample_dir>
 
 Loads <sample_dir>/sample.toml plus every acquisition.toml one level below,
 merges them into a SampleRecord keyed by acquisition directory name, and
@@ -12,17 +12,17 @@ are reported as warnings but do not fail validation.
 from __future__ import annotations
 
 import sys
-import tomli
+import tomllib
 from pathlib import Path
 
 from pydantic import BaseModel, ValidationError
 
-from schema import AcquisitionFile, SampleRecord
+from cryoet_schema import AcquisitionFile, SampleRecord
 
 
 def _load_toml(path: Path) -> dict:
     with path.open("rb") as f:
-        return tomli.load(f)
+        return tomllib.load(f)
 
 
 def _known_fields(model_cls: type[BaseModel]) -> set[str]:
@@ -56,7 +56,7 @@ def _format_error_loc(loc: tuple) -> str:
     return ".".join(str(x) for x in loc)
 
 
-def validate_sample_dir(sample_dir: Path) -> tuple[SampleRecord | None, list[str], list[str]]:
+def validate_dir(sample_dir: Path) -> tuple[SampleRecord | None, list[str], list[str]]:
     """Return (record, errors, warnings). record is None iff errors is non-empty."""
     errors: list[str] = []
     warnings: list[str] = []
@@ -68,7 +68,7 @@ def validate_sample_dir(sample_dir: Path) -> tuple[SampleRecord | None, list[str
 
     try:
         sample_data = _load_toml(sample_toml)
-    except tomli.TOMLDecodeError as e:
+    except tomllib.TOMLDecodeError as e:
         errors.append(f"sample.toml: TOML parse error: {e}")
         return None, errors, warnings
 
@@ -77,7 +77,7 @@ def validate_sample_dir(sample_dir: Path) -> tuple[SampleRecord | None, list[str
         acq_name = acq_toml.parent.name
         try:
             acq_data = _load_toml(acq_toml)
-        except tomli.TOMLDecodeError as e:
+        except tomllib.TOMLDecodeError as e:
             errors.append(f"{acq_name}/acquisition.toml: TOML parse error: {e}")
             continue
         acq_data.setdefault("acquisition", {})["acquisition_id"] = acq_name
@@ -106,7 +106,7 @@ def validate_sample_dir(sample_dir: Path) -> tuple[SampleRecord | None, list[str
 
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
-        print("Usage: validate_sample.py <sample_dir>", file=sys.stderr)
+        print("Usage: validate.py <sample_dir>", file=sys.stderr)
         return 2
 
     sample_dir = Path(argv[1]).resolve()
@@ -114,7 +114,7 @@ def main(argv: list[str]) -> int:
         print(f"error: {sample_dir} is not a directory", file=sys.stderr)
         return 2
 
-    record, errors, warnings = validate_sample_dir(sample_dir)
+    record, errors, warnings = validate_dir(sample_dir)
 
     for w in warnings:
         print(f"warning: {w}")

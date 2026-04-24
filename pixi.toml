@@ -6,10 +6,9 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
-validate = "python validate_sample.py"
-json-schema = "python generate_json_schema.py"
+validate = "python -m scripts.validate"
+json-schema = "python -m scripts.generate_json_schema"
 
 [dependencies]
 python = ">=3.11"
 pydantic = ">=2.6"
-tomli = ">=2.0"
