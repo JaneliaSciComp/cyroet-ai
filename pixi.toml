@@ -5,10 +5,20 @@ name = "cryoet-schema"
 platforms = ["linux-64"]
 version = "0.1.0"
 
-[tasks]
-validate = "python -m scripts.validate"
-json-schema = "python -m scripts.generate_json_schema"
+[environments]
+default = { solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
 
 [dependencies]
 python = ">=3.11"
 pydantic = ">=2.6"
+
+[tasks]
+validate = "python -m scripts.validate"
+json-schema = "python -m scripts.generate_json_schema"
+
+[feature.test.dependencies]
+pytest = ">=7.0"
+
+[feature.test.tasks]
+test = "pytest"
