@@ -98,6 +98,98 @@ def test_invalid_enum_value(tmp_path):
     assert any("data_source" in e for e in errors)
 
 
+def test_extra_field_no_typo_only_generic_warning(tmp_path):
+    _write(
+        tmp_path / "sample.toml",
+        """
+        [sample]
+        data_source = "cryoet"
+        project = "chromatin"
+        totally_unrelated_key = "foo"
+        """,
+    )
+    record, errors, warnings = validate_dir(tmp_path)
+    assert errors == []
+    assert record is not None
+    typo_warnings = [w for w in warnings if "possible typo" in w]
+    generic_warnings = [w for w in warnings if "not in schema" in w]
+    assert typo_warnings == []
+    assert any("totally_unrelated_key" in w for w in generic_warnings)
+
+
+def test_extra_field_typo_produces_suggestion(tmp_path):
+    _write(
+        tmp_path / "sample.toml",
+        """
+        [sample]
+        data_source = "cryoet"
+        project = "chromatin"
+        descriptiom = "typo here"
+        """,
+    )
+    record, errors, warnings = validate_dir(tmp_path)
+    assert errors == []
+    assert record is not None
+    typo_warnings = [w for w in warnings if "possible typo" in w]
+    assert len(typo_warnings) == 1
+    assert "descriptiom" in typo_warnings[0]
+    assert "description" in typo_warnings[0]
+    assert "Sample" in typo_warnings[0]
+
+
+def test_typo_on_nested_model(tmp_path):
+    _write(
+        tmp_path / "sample.toml",
+        """
+        [sample]
+        data_source = "cryoet"
+        project = "chromatin"
+
+        [chromatin]
+        bufffer = "typo"
+        """,
+    )
+    _, errors, warnings = validate_dir(tmp_path)
+    assert errors == []
+    typo_warnings = [w for w in warnings if "possible typo" in w]
+    assert any("bufffer" in w and "buffer" in w and "Chromatin" in w for w in typo_warnings)
+
+
+def test_typo_in_acquisition(tmp_path):
+    _minimal_sample(tmp_path)
+    _write(
+        tmp_path / "acq1" / "acquisition.toml",
+        """
+        [acquisition]
+        microscoope = "typo"
+        """,
+    )
+    _, errors, warnings = validate_dir(tmp_path)
+    assert errors == []
+    typo_warnings = [w for w in warnings if "possible typo" in w]
+    assert any("microscoope" in w and "microscope" in w for w in typo_warnings)
+
+
+def test_typo_warning_preserved_when_validation_fails(tmp_path):
+    _write(
+        tmp_path / "sample.toml",
+        """
+        [sample]
+        data_source = "cryoet"
+        project = "chromatin"
+        descriptiom = "typo alongside a hard error"
+
+        [chromatin]
+        nucleosome_count = "not-an-int"
+        """,
+    )
+    record, errors, warnings = validate_dir(tmp_path)
+    assert record is None
+    assert any("nucleosome_count" in e for e in errors)
+    typo_warnings = [w for w in warnings if "possible typo" in w]
+    assert any("descriptiom" in w and "description" in w for w in typo_warnings)
+
+
 def test_project_block_mismatch_synapse_on_chromatin(tmp_path):
     _write(
         tmp_path / "sample.toml",
@@ -349,3 +441,17 @@ def test_main_failure_returns_1(tmp_path, capsys):
     assert "FAIL" in out.err
 
 
+def test_main_prints_typo_warning(tmp_path, capsys):
+    _write(
+        tmp_path / "sample.toml",
+        """
+        [sample]
+        data_source = "cryoet"
+        project = "chromatin"
+        descriptiom = "typo"
+        """,
+    )
+    rc = main(["validate.py", str(tmp_path)])
+    out = capsys.readouterr()
+    assert rc == 0
+    assert "possible typo" in out.out

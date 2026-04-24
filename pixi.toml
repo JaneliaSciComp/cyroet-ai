@@ -12,6 +12,7 @@ test = { features = ["test"], solve-group = "default" }
 [dependencies]
 python = ">=3.11"
 pydantic = ">=2.6"
+rapidfuzz = ">=3.0"
 
 [tasks]
 validate = "python -m scripts.validate"

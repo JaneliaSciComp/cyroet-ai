@@ -19,10 +19,14 @@ from __future__ import annotations
 
 import datetime as _dt
 import re as _re
+import warnings as _warnings
 from enum import Enum
 from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+from rapidfuzz import fuzz, process
+
+_TYPO_SCORE_CUTOFF = 80
 
 # Identity fields (sample_id, acquisition_id, tomogram_id, annotation_id) become
 # DB primary keys and live inside path strings, URLs, and shell commands, so we
@@ -77,6 +81,35 @@ def _case_insensitive_duplicates(values, label: str) -> list[str]:
 
 class _Base(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    @model_validator(mode="after")
+    def _warn_extra_field_typos(self):
+        extras = self.model_extra or {}
+        if not extras:
+            return self
+        known: set[str] = set()
+        for fname, finfo in type(self).model_fields.items():
+            known.add(fname)
+            if finfo.alias:
+                known.add(finfo.alias)
+        known -= set(extras)
+        if not known:
+            return self
+        for name in extras:
+            match = process.extractOne(
+                name, known, scorer=fuzz.ratio, score_cutoff=_TYPO_SCORE_CUTOFF
+            )
+            if match is None:
+                continue
+            suggestion, score, _ = match
+            _warnings.warn(
+                f"extra field '{name}' on {type(self).__name__} "
+                f"closely matches known field '{suggestion}' "
+                f"(similarity {score:.0f}); possible typo",
+                UserWarning,
+                stacklevel=2,
+            )
+        return self
 
 
 class DataSource(str, Enum):
