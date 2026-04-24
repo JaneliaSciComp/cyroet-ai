@@ -15,7 +15,7 @@ The central design goal is answering one question across both the experimental a
 | `templates/acquisition.toml` | Starter template for `acquisition.toml` — copy into each acquisition directory and fill in. |
 | `scripts/validate.py` | Validator: `pixi run validate {sample_dir}`. |
 | `scripts/generate_json_schema.py` | Regenerates `schema.json` from the Pydantic models: `pixi run json-schema`. |
-| `pixi.toml` / `pixi.lock` | Pinned Python + Pydantic + tomli environment. |
+| `pixi.toml` / `pixi.lock` | Pinned default and testing environments, with pixi tasks defined for each. |
 
 ---
 
