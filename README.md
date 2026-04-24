@@ -181,17 +181,15 @@ gouauxlab_20250418_AMmilled29-2/
 
 ### 2. Fill out `sample.toml`
 
-Copy `templates/sample.toml` to the sample root as `sample.toml` and fill it in:
+Copy `templates/sample.toml` to the sample root and fill it in:
 
 - Every field marked `← FILL IN` must be completed.
 - Delete the `[synapse]` block if your project is `chromatin`, or vice versa.
-- Uncomment optional blocks (`[[aunp]]`, `[freezing]`, `[milling]`) only if they apply.
-
-Sample-level conditions only — do not put imaging parameters here.
+- Uncomment and complete the [[aunp]], [freezing], and [milling] blocks.
 
 ### 3. Fill out `acquisition.toml` in each acquisition directory
 
-Copy `templates/acquisition.toml` into each acquisition directory as `acquisition.toml` and fill in the researcher-authored imaging parameters (nominal resolution, microscope, defocus range, …). The template pre-populates fields that are constant across a lab's acquisitions, so you should only need to change what differs between acquisitions.
+Copy `templates/acquisition.toml` into each acquisition directory and fill in the researcher-authored imaging parameters (nominal resolution, microscope, defocus range, …).
 
 Leave the processing-log section (the `[[tomogram]]` and `[[annotation]]` blocks) empty at this stage — you'll append to it as processing happens.
 
@@ -206,13 +204,13 @@ Each `acquisition.toml` grows over time. For each new output — a new tomogram 
 
 Because each acquisition has its own file, appends are strictly tail-append and parallel work on different acquisitions never causes merge conflicts.
 
-### 5. (Optional) Validate before committing
+### 5. Validate
 
 ```
 pixi run validate {sample_dir}
 ```
 
-This validates `sample.toml` and every `acquisition.toml` under the sample directory. Validation will also run during database ingestion — see `schema_info.md` for the full list of fields that will be stored, including those auto-derived from MDOCs, MRC headers, OME-Zarr metadata, and directory structure. Running the validator locally is a convenience, not a requirement.
+This validates `sample.toml` and every `acquisition.toml` under the sample directory and will notify the researcher of any fields that violate the schema. Validation will also run during database ingestion — see `schema_info.md` for the full list of fields that will be stored, including those auto-derived from MDOCs, MRC headers, OME-Zarr metadata, and directory structure.
 
 ---
 
