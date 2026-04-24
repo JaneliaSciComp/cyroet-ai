@@ -18,9 +18,61 @@ preserved (``extra='allow'``) and reported as warnings rather than errors.
 from __future__ import annotations
 
 import datetime as _dt
+import re as _re
 from enum import Enum
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+
+# Identity fields (sample_id, acquisition_id, tomogram_id, annotation_id) become
+# DB primary keys and live inside path strings, URLs, and shell commands, so we
+# restrict them to a conservative, cross-platform-safe allowlist.
+_ID_MAX_LEN = 128
+_ID_PATTERN = _re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+_WINDOWS_RESERVED_NAMES = frozenset(
+    {"CON", "PRN", "AUX", "NUL"}
+    | {f"COM{i}" for i in range(1, 10)}
+    | {f"LPT{i}" for i in range(1, 10)}
+)
+
+
+def _validate_id(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("id must be a string")
+    if not value:
+        raise ValueError("id must not be empty")
+    if len(value) > _ID_MAX_LEN:
+        raise ValueError(f"id must be at most {_ID_MAX_LEN} characters")
+    if not _ID_PATTERN.fullmatch(value):
+        raise ValueError(
+            "id must start with [A-Za-z0-9] and contain only letters, digits, "
+            "'.', '_', or '-' (no spaces, slashes, or other punctuation)"
+        )
+    if value.endswith((".", "-")):
+        raise ValueError("id must not end with '.' or '-'")
+    if ".." in value:
+        raise ValueError("id must not contain '..'")
+    if value.upper() in _WINDOWS_RESERVED_NAMES:
+        raise ValueError(f"id '{value}' is a reserved name on Windows")
+    return value
+
+
+IdStr = Annotated[str, AfterValidator(_validate_id)]
+
+
+def _case_insensitive_duplicates(values, label: str) -> list[str]:
+    """Return error strings for any case-insensitive collisions among `values`."""
+    seen: dict[str, str] = {}
+    problems: list[str] = []
+    for v in values:
+        key = v.casefold()
+        if key in seen and seen[key] != v:
+            problems.append(
+                f"{label} '{v}' collides case-insensitively with '{seen[key]}'"
+            )
+        else:
+            seen.setdefault(key, v)
+    return problems
 
 
 class _Base(BaseModel):
@@ -39,7 +91,7 @@ class Project(str, Enum):
 
 class Sample(_Base):
     # directory (sample folder name, injected on load)
-    sample_id: str | None = None
+    sample_id: IdStr | None = None
     # sample.toml ([sample])
     data_source: DataSource
     project: Project
@@ -102,7 +154,7 @@ class Milling(_Base):
 
 class Acquisition(_Base):
     # directory (acquisition folder name, injected on load)
-    acquisition_id: str | None = None
+    acquisition_id: IdStr | None = None
     # acquisition.toml ([acquisition])
     resolution: float | None = None          # angstrom
     tilt_spacing: float | None = None        # degrees
@@ -128,12 +180,12 @@ class Acquisition(_Base):
 
 class Tomogram(_Base):
     # directory / acquisition.toml [[tomogram]] (folder name = tomogram_id = TOML `id`)
-    tomogram_id: str = Field(alias="id")
+    tomogram_id: IdStr = Field(alias="id")
     pipeline: str | None = None
     software: str | None = None
     voxel_bin: int | None = None
     voxel_spacing_angstrom: float | None = None      # cross-checked with MRC header
-    derived_from: list[str] = Field(default_factory=list)
+    derived_from: list[IdStr] = Field(default_factory=list)
     # derived
     is_raw: bool | None = None                        # derived_from == []
     # MRC header
@@ -150,9 +202,9 @@ class Tomogram(_Base):
 
 class Annotation(_Base):
     # directory / acquisition.toml [[annotation]] (folder name = annotation_id = TOML `id`)
-    annotation_id: str = Field(alias="id")
+    annotation_id: IdStr = Field(alias="id")
     type: str | None = None
-    target_tomogram: str | None = None
+    target_tomogram: IdStr | None = None
     # directory scan (artifacts discovered in the annotation folder)
     files: list[str] = Field(default_factory=list)
 
@@ -168,6 +220,12 @@ class AcquisitionFile(_Base):
     def _check_cross_refs(self) -> "AcquisitionFile":
         tomo_ids = {t.tomogram_id for t in self.tomogram}
         problems: list[str] = []
+        problems.extend(_case_insensitive_duplicates(
+            (t.tomogram_id for t in self.tomogram), "tomogram id"
+        ))
+        problems.extend(_case_insensitive_duplicates(
+            (a.annotation_id for a in self.annotation), "annotation id"
+        ))
         for t in self.tomogram:
             for ref in t.derived_from:
                 if ref not in tomo_ids:
@@ -211,4 +269,11 @@ class SampleRecord(_Base):
             raise ValueError(
                 "sample.data_source is 'cryoet' but a [simulation] block is present"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _check_acquisition_name_collisions(self) -> "SampleRecord":
+        problems = _case_insensitive_duplicates(self.acquisitions.keys(), "acquisition id")
+        if problems:
+            raise ValueError("; ".join(problems))
         return self

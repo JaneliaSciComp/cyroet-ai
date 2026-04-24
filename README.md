@@ -105,6 +105,17 @@ Researchers do **not** enter these fields in `acquisition.toml`:
 
 Only two fields are required for all entries: `sample.data_source` and `sample.project`. All other fields are optional, allowing the schema to grow as researcher needs settle. These two fields are also the only enums — all other fields are open text, with the potential to be tightened into enums later based on how researchers use them.
 
+### Folder naming rules
+
+Four folder names become primary keys in the portal database: the sample directory (`sample_id`), each acquisition directory (`acquisition_id`), each tomogram processing subfolder (`tomogram_id`), and each annotation subfolder (`annotation_id`). The same strings may also be used in path expressions, URLs, and shell commands, so they are restricted to a conservative, cross-platform-safe allowlist.
+
+A valid id must:
+
+- be 1–128 characters long,
+- contain only letters, numbers, `.`, `_`, and `-`,
+- start and end with a letter or number,
+- not contain `..`
+
 ### Extra fields
 
 You may add any key-value pair to any section of `sample.toml` or `acquisition.toml` that is not yet in the schema. For example:
