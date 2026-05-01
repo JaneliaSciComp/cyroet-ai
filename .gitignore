@@ -5,8 +5,5 @@
 __pycache__
 .pytest_cache
 
-# Devcontainer
-.devcontainer
-
 # datasets
 data
